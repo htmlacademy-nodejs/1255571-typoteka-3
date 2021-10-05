@@ -1,7 +1,7 @@
 # Личный проект «Типотека» [![Build status][travis-image]][travis-url]
 
 * Студент: [Тимур Кутовой](https://up.htmlacademy.ru/nodejs/3/user/1255571).
-* Наставник: [Вадим Осюков](https://htmlacademy.ru/profile/id1411353).
+* Наставник: [Владислав Зубко](https://htmlacademy.ru/profile/whatislove).
 
 ---
 
