@@ -1,7 +1,6 @@
 'use strict';
 
-const chalk = require(`chalk`);
-const http = require(`http`);
+const express = require(`express`);
 const fs = require(`fs`).promises;
 
 const {
@@ -10,43 +9,9 @@ const {
   HttpCode
 } = require(`../../constants`);
 
-const sendResponse = (res, statusCode, message) => {
-  const template = `
-    <!Doctype html>
-      <html lang="ru">
-      <head>
-        <title>With love from Node</title>
-      </head>
-      <body>${message}</body>
-    </html>`.trim();
+const app = express();
 
-  res.writeHead(statusCode, {
-    'Content-Type': `text/html; charset=UTF-8`,
-  });
-
-  res.end(template);
-};
-
-const onClientConnect = async (req, res) => {
-  const notFoundMessageText = `Not found`;
-
-  switch (req.url) {
-    case `/`:
-      try {
-        const fileContent = await fs.readFile(FILENAME);
-        const mocks = JSON.parse(fileContent);
-        const message = mocks.map((post) => `<li>${post.title}</li>`).join(``);
-        sendResponse(res, HttpCode.OK, `<ul>${message}</ul>`);
-      } catch (err) {
-        sendResponse(res, HttpCode.NOT_FOUND, notFoundMessageText);
-      }
-
-      break;
-    default:
-      sendResponse(res, HttpCode.NOT_FOUND, notFoundMessageText);
-      break;
-  }
-};
+app.use(express.json());
 
 module.exports = {
   name: `--server`,
@@ -54,13 +19,22 @@ module.exports = {
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
 
-    http.createServer(onClientConnect)
-    .listen(port)
-    .on(`listening`, () => {
-      console.info(chalk.green(`Ожидаю соединений на ${port}`));
-    })
-    .on(`error`, ({message}) => {
-      console.error(chalk.red(`Ошибка при создании сервера: ${message}`));
+    app.get(`/posts`, async (req, res) => {
+      try {
+        const fileContent = await fs.readFile(FILENAME);
+        const mocks = JSON.parse(fileContent);
+        res.json(mocks);
+      } catch (_err) {
+        res.send([]);
+      }
+    });
+
+    app.use((req, res) => res
+      .status(HttpCode.NOT_FOUND)
+      .send(`Not found`));
+
+    app.listen(port, () => {
+      console.log(`Сервер запущен по адресу: http://localhost:${port}`);
     });
   }
 };
