@@ -1,17 +1,21 @@
 'use strict';
 
 const express = require(`express`);
-const fs = require(`fs`).promises;
 
 const {
   DEFAULT_PORT,
-  FILENAME,
-  HttpCode
+  HttpCode,
+  API_PREFIX
 } = require(`../../constants`);
+const routes = require(`../api`);
+
+const {getMockData} = require(`../lib/get-mock-data`);
 
 const app = express();
 
 app.use(express.json());
+
+app.use(API_PREFIX, routes);
 
 module.exports = {
   name: `--server`,
@@ -20,10 +24,10 @@ module.exports = {
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
 
     app.get(`/posts`, async (req, res) => {
+      const mockData = await getMockData();
+
       try {
-        const fileContent = await fs.readFile(FILENAME);
-        const mocks = JSON.parse(fileContent);
-        res.json(mocks);
+        res.json(mockData);
       } catch (_err) {
         res.send([]);
       }
