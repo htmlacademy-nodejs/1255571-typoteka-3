@@ -3,11 +3,23 @@
 const express = require(`express`);
 
 const {
-  DEFAULT_PORT,
-  HttpCode,
-  API_PREFIX
+  VARIABLE_LIST,
+  HTTP_CODE,
 } = require(`../../constants`);
-const routes = require(`../api`);
+
+const {
+  CategoryService,
+  SearchService,
+  ArticleService,
+  CommentService,
+} = require(`../data-service`);
+
+const {Router} = require(`express`);
+const {
+  categories,
+  articles,
+  search,
+} = require(`../api`);
 
 const {getMockData} = require(`../lib/get-mock-data`);
 
@@ -15,17 +27,26 @@ const app = express();
 
 app.use(express.json());
 
-app.use(API_PREFIX, routes);
+const routes = new Router();
+let mockData;
+
+(async () => {
+  mockData = await getMockData();
+
+  categories(app, new CategoryService(mockData));
+  search(app, new SearchService(mockData));
+  articles(app, new ArticleService(mockData), new CommentService(mockData));
+})();
+
+app.use(VARIABLE_LIST.API_PREFIX, routes);
 
 module.exports = {
   name: `--server`,
   run(args) {
     const [customPort] = args;
-    const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
+    const port = Number.parseInt(customPort, 10) || VARIABLE_LIST.DEFAULT_PORT;
 
     app.get(`/posts`, async (req, res) => {
-      const mockData = await getMockData();
-
       try {
         res.json(mockData);
       } catch (_err) {
@@ -34,7 +55,7 @@ module.exports = {
     });
 
     app.use((req, res) => res
-      .status(HttpCode.NOT_FOUND)
+      .status(HTTP_CODE.NOT_FOUND)
       .send(`Not found`));
 
     app.listen(port, () => {

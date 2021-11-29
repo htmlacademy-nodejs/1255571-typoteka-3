@@ -1,22 +1,20 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {HttpCode} = require(`../../constants`);
+const {HTTP_CODE} = require(`../../constants`);
 const {ArticleService} = require(`../data-service/articles`);
 
-const {articleValidator} = require(`../middlewares/articleValidator`);
-const {articleExist} = require(`../middlewares/articleExist`);
+const articleValidator = require(`../middlewares/article-validator`);
+const articleExist = require(`../middlewares/article-exist`);
 
-const route = new Router();
+module.exports = (app, service, commentService) => {
+  const route = new Router();
 
-console.log(articleValidator);
-
-module.exports = (app, service) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
     const articles = await service.findAll();
-    res.status(HttpCode.OK)
+    res.status(HTTP_CODE.OK)
       .json(articles);
   });
 
@@ -25,18 +23,18 @@ module.exports = (app, service) => {
     const article = ArticleService.findOne(articleId);
 
     if (!article) {
-      return res.status(HttpCode.NOT_FOUND)
+      return res.status(HTTP_CODE.NOT_FOUND)
         .send(`Not found with ${articleId}`);
     }
 
-    return res.status(HttpCode.OK)
+    return res.status(HTTP_CODE.OK)
       .json(article);
   });
 
   route.post(`/`, articleValidator, (req, res) => {
     const article = ArticleService.create(req.body);
 
-    return res.status(HttpCode.CREATED)
+    return res.status(HTTP_CODE.CREATED)
       .json(article);
   });
 
@@ -44,7 +42,7 @@ module.exports = (app, service) => {
     const {articleId} = req.params;
     const article = ArticleService.update(articleId, req.body);
 
-    return res.status(HttpCode.OK)
+    return res.status(HTTP_CODE.OK)
       .json(article);
   });
 
@@ -52,7 +50,7 @@ module.exports = (app, service) => {
     const {articleId} = req.params;
     const article = ArticleService.drop(articleId);
 
-    return res.status(HttpCode.OK)
+    return res.status(HTTP_CODE.OK)
       .json(article);
   });
 
@@ -63,29 +61,31 @@ module.exports = (app, service) => {
     const article = ArticleService.findOne(articleId);
 
     if (!article) {
-      return res.status(HttpCode.NOT_FOUND)
+      return res.status(HTTP_CODE.NOT_FOUND)
         .send(`Not found with ${articleId}`);
     }
 
     const comments = article.comments;
 
-    return res.status(HttpCode.OK)
+    return res.status(HTTP_CODE.OK)
       .json(comments);
   });
 
   route.post(`/:articleId/comments`, [articleExist(articleValidator), articleValidator], (req, res) => {
-    const {article} = res.locals;
-    const comment = ArticleService.createComment(article, req.body);
+    const {articleId} = req.params;
+    const article = ArticleService.findOne(articleId);
+    const comment = commentService.createComment(article, req.body);
 
-    return res.status(HttpCode.CREATED)
+    return res.status(HTTP_CODE.CREATED)
       .json(comment);
   });
 
   route.delete(`/:articleId/comments/:commentId`, [articleExist(articleValidator), articleValidator], (req, res) => {
-    const {article} = res.locals;
-    const commentId = ArticleService.dropComment(article, req.body);
+    const {articleId} = req.params;
+    const article = ArticleService.findOne(articleId);
+    const commentId = commentService.dropComment(article, req.body);
 
-    return res.status(HttpCode.OK)
+    return res.status(HTTP_CODE.OK)
       .json(commentId);
   });
 

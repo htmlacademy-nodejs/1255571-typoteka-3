@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+const VARIABLE_LIST = {
   DEFAULT_COMMAND: `--help`,
   USER_ARGV_INDEX: 2,
   ExitCode: 1,
@@ -10,14 +10,14 @@ module.exports = {
   API_PREFIX: `/api`,
 };
 
-module.exports.DATA_PATH = {
+const DATA_PATH = {
   FILE_SENTENCES_PATH: `./data/sentences.txt`,
   FILE_TITLES_PATH: `./data/titles.txt`,
   FILE_CATEGORIES_PATH: `./data/categories.txt`,
   FILE_COMMENTS_PATH: `./data/comments.txt`,
 };
 
-module.exports.HttpCode = {
+const HTTP_CODE = {
   OK: 200,
   CREATED: 201,
   BAD_REQUEST: 400,
@@ -25,4 +25,10 @@ module.exports.HttpCode = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
+};
+
+module.exports = {
+  VARIABLE_LIST,
+  HTTP_CODE,
+  DATA_PATH,
 };

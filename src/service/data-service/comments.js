@@ -5,7 +5,7 @@ const {
   VARIABLE_LIST,
 } = require(`../../constants`);
 
-class ArticleService {
+class CommentService {
   constructor(articles) {
     this._articles = articles;
   }
@@ -76,4 +76,4 @@ class ArticleService {
   }
 }
 
-module.exports = ArticleService;
+module.exports = CommentService;

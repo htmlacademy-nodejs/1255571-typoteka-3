@@ -27,7 +27,7 @@
   "dependencies": {
     "chalk": "4.1.1",
     "express": "4.17.1",
-    "moment": "^2.29.1",
+    "moment": "2.29.1",
     "nanoid": "3.1.30",
     "pug": "2.0.4"
   }

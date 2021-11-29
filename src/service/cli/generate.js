@@ -8,9 +8,8 @@ const {
   randomDate,
 } = require(`../../utils`);
 const {
-  ExitCode,
+  VARIABLE_LIST,
   DATA_PATH,
-  MAX_ID_LENGTH,
 } = require(`../../constants`);
 const moment = require(`moment`);
 const {nanoid} = require(`nanoid`);
@@ -36,8 +35,8 @@ const readFileContent = async (filePath) => {
 };
 
 const generateComments = (count, comments) => (
-  Array(count).fill({}).map(() => ({
-    id: nanoid(MAX_ID_LENGTH),
+  new Array(count).fill({}).map(() => ({
+    id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH),
     text: shuffle(comments)
       .slice(0, getRandomInt(1, 3))
       .join(` `),
@@ -45,8 +44,8 @@ const generateComments = (count, comments) => (
 );
 
 const generateOffers = (count, sentences, titles, categories, comments) => (
-  Array(count).fill({}).map(() => ({
-    id: nanoid(MAX_ID_LENGTH),
+  new Array(count).fill({}).map(() => ({
+    id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH),
     title: titles[getRandomInt(0, titles.length - 1)],
     announce: shuffle(sentences).slice(1, 5).join(` `),
     fullText: shuffle(sentences).slice(1, 5).join(` `),
@@ -63,7 +62,7 @@ const writeFile = async (content) => {
     process.exit(0);
   } catch (error) {
     console.error(chalk.red(`Не удалось записать данные в файл...`));
-    process.exit(ExitCode);
+    process.exit(VARIABLE_LIST.ExitCode);
   }
 };
 
@@ -73,7 +72,7 @@ module.exports = {
     const [count] = args;
     if (Number.parseInt(count, 10) >= MAX_COUNT) {
       console.log(chalk.red(`Не больше 1000 объявлений!`));
-      process.exit(ExitCode);
+      process.exit(VARIABLE_LIST.ExitCode);
     }
     const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
