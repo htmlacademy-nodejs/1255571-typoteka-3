@@ -2,17 +2,15 @@
 
 const {Cli} = require(`./cli`);
 const {
-  DEFAULT_COMMAND,
-  USER_ARGV_INDEX,
-  ExitCode
+  VARIABLE_LIST,
 } = require(`../constants`);
 
-const userArguments = process.argv.slice(USER_ARGV_INDEX);
+const userArguments = process.argv.slice(VARIABLE_LIST.USER_ARGV_INDEX);
 const [userCommand] = userArguments;
 
 if (userArguments.length === 0 || !Cli[userCommand]) {
-  Cli[DEFAULT_COMMAND].run();
-  process.exit(ExitCode.success);
+  Cli[VARIABLE_LIST.DEFAULT_COMMAND].run();
+  process.exit(VARIABLE_LIST.ExitCode.success);
 }
 
 Cli[userCommand].run(userArguments.slice(1));
