@@ -12,7 +12,7 @@ class ArticleService {
 
   create(article) {
     const newArticle = Object
-      .assign({id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH), comments: []}, article);
+      .assign({id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH), comments: [], createdDate: Date.now()}, article);
 
     this._articles.push(newArticle);
     return newArticle;
@@ -49,7 +49,7 @@ class ArticleService {
       .find((item) => item.id === article.id);
 
     const newComment = Object
-      .assign({id: nanoid(MAX_ID_LENGTH)}, comment);
+      .assign({id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH)}, comment);
 
     const newArticle = oldArticle.comments.push(newComment);
 

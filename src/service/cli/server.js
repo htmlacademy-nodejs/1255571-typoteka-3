@@ -1,6 +1,8 @@
 'use strict';
 
 const express = require(`express`);
+const {getLogger} = require(`../lib/logger`);
+const logger = getLogger({name: `api`});
 
 const {
   VARIABLE_LIST,
@@ -40,6 +42,24 @@ let mockData;
 
 app.use(VARIABLE_LIST.API_PREFIX, routes);
 
+app.use((req, res) => {
+  res.status(HTTP_CODE.NOT_FOUND)
+    .send(`Not found`);
+  logger.error(`Route not found: ${req.url}`);
+});
+
+app.use((err, _req, _res, _next) => {
+  logger.error(`An error occurred on processing request: ${err.message}`);
+});
+
+app.use((req, res, next) => {
+  logger.debug(`Request on route ${req.url}`);
+  res.on(`finish`, () => {
+    logger.info(`Response status code ${res.statusCode}`);
+  });
+  next();
+});
+
 module.exports = {
   name: `--server`,
   run(args) {
@@ -58,8 +78,18 @@ module.exports = {
       .status(HTTP_CODE.NOT_FOUND)
       .send(`Not found`));
 
-    app.listen(port, () => {
-      console.log(`Сервер запущен по адресу: http://localhost:${port}`);
-    });
+    try {
+      app.listen(port, (err) => {
+        if (err) {
+          return logger.error(`An error occurred on server creation: ${err.message}`);
+        }
+
+        return logger.info(`Listening to connections on ${port}`);
+      });
+
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
+    }
   }
 };
