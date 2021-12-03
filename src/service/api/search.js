@@ -10,9 +10,20 @@ module.exports = (app, service) => {
 
   route.get(`/`, async (req, res) => {
     const {query} = req.query;
+
+    if (typeof query === `undefined`) {
+      return res.status(HTTP_CODE.BAD_REQUEST)
+        .send(`Bad request`);
+    }
+
     const atricles = await service.find(query);
 
-    res.status(HTTP_CODE.OK)
+    if (!atricles || atricles.length === 0) {
+      return res.status(HTTP_CODE.NOT_FOUND)
+        .send(`Not found with ${query}`);
+    }
+
+    return res.status(HTTP_CODE.OK)
       .json(atricles);
   });
 };

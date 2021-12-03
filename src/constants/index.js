@@ -27,8 +27,14 @@ const HTTP_CODE = {
   INTERNAL_SERVER_ERROR: 500,
 };
 
+const ENV_LIST = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
+
 module.exports = {
   VARIABLE_LIST,
   HTTP_CODE,
   DATA_PATH,
+  ENV_LIST,
 };
