@@ -6,7 +6,7 @@ const logger = getLogger({name: `api`});
 
 const {
   VARIABLE_LIST,
-  HTTP_CODE,
+  HttpCode,
 } = require(`../../constants`);
 
 const {
@@ -35,22 +35,12 @@ let mockData;
 (async () => {
   mockData = await getMockData();
 
-  categories(app, new CategoryService(mockData));
-  search(app, new SearchService(mockData));
-  articles(app, new ArticleService(mockData), new CommentService(mockData));
+  categories(routes, new CategoryService(mockData));
+  search(routes, new SearchService(mockData));
+  articles(routes, new ArticleService(mockData), new CommentService(mockData));
 })();
 
 app.use(VARIABLE_LIST.API_PREFIX, routes);
-
-app.use((req, res) => {
-  res.status(HTTP_CODE.NOT_FOUND)
-    .send(`Not found`);
-  logger.error(`Route not found: ${req.url}`);
-});
-
-app.use((err, _req, _res, _next) => {
-  logger.error(`An error occurred on processing request: ${err.message}`);
-});
 
 app.use((req, res, next) => {
   logger.debug(`Request on route ${req.url}`);
@@ -74,9 +64,15 @@ module.exports = {
       }
     });
 
-    app.use((req, res) => res
-      .status(HTTP_CODE.NOT_FOUND)
-      .send(`Not found`));
+    app.use((req, res) => {
+      res.status(HttpCode.NOT_FOUND)
+        .send(`Not found`);
+      logger.error(`Route not found: ${req.url}`);
+    });
+
+    app.use((err, _req, _res, _next) => {
+      logger.error(`An error occurred on processing request: ${err.message}`);
+    });
 
     try {
       app.listen(port, (err) => {

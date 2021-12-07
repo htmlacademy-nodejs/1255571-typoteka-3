@@ -1,7 +1,7 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {HTTP_CODE} = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 
 const articleValidator = require(`../middlewares/article-validator`);
 const articleExist = require(`../middlewares/article-exist`);
@@ -13,7 +13,7 @@ module.exports = (app, service, commentService) => {
 
   route.get(`/`, async (req, res) => {
     const articles = await service.findAll();
-    res.status(HTTP_CODE.OK)
+    res.status(HttpCode.OK)
       .json(articles);
   });
 
@@ -22,18 +22,18 @@ module.exports = (app, service, commentService) => {
     const article = service.findOne(articleId);
 
     if (!article) {
-      return res.status(HTTP_CODE.NOT_FOUND)
+      return res.status(HttpCode.NOT_FOUND)
         .send(`Not found with ${articleId}`);
     }
 
-    return res.status(HTTP_CODE.OK)
+    return res.status(HttpCode.OK)
       .json(article);
   });
 
   route.post(`/`, articleValidator, (req, res) => {
     const article = service.create(req.body);
 
-    return res.status(HTTP_CODE.CREATED)
+    return res.status(HttpCode.CREATED)
       .json(article);
   });
 
@@ -41,7 +41,7 @@ module.exports = (app, service, commentService) => {
     const {articleId} = req.params;
     const article = service.update(articleId, req.body);
 
-    return res.status(HTTP_CODE.OK)
+    return res.status(HttpCode.OK)
       .json(article);
   });
 
@@ -49,7 +49,7 @@ module.exports = (app, service, commentService) => {
     const {articleId} = req.params;
     const article = service.drop(articleId);
 
-    return res.status(HTTP_CODE.OK)
+    return res.status(HttpCode.OK)
       .json(article);
   });
 
@@ -60,13 +60,13 @@ module.exports = (app, service, commentService) => {
     const article = service.findOne(articleId);
 
     if (!article) {
-      return res.status(HTTP_CODE.NOT_FOUND)
+      return res.status(HttpCode.NOT_FOUND)
         .send(`Not found with ${articleId}`);
     }
 
     const comments = article.comments;
 
-    return res.status(HTTP_CODE.OK)
+    return res.status(HttpCode.OK)
       .json(comments);
   });
 
@@ -75,7 +75,7 @@ module.exports = (app, service, commentService) => {
     const article = service.findOne(articleId);
     const comment = commentService.createComment(article, req.body);
 
-    return res.status(HTTP_CODE.CREATED)
+    return res.status(HttpCode.CREATED)
       .json(comment);
   });
 
@@ -85,11 +85,11 @@ module.exports = (app, service, commentService) => {
     const commentId = commentService.dropComment(article, req.body);
 
     if (commentId === null) {
-      return res.status(HTTP_CODE.NOT_FOUND)
+      return res.status(HttpCode.NOT_FOUND)
         .send(`Not found comment`);
     }
 
-    return res.status(HTTP_CODE.OK)
+    return res.status(HttpCode.OK)
       .json(commentId);
   });
 

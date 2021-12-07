@@ -1,6 +1,6 @@
 'use strict';
 
-const {HTTP_CODE} = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 
 const articleKeys = [`title`, `announce`, `fullText`, `category`];
 
@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
   const keysExists = articleKeys.every((key) => keys.includes(key));
 
   if (!keysExists) {
-    res.status(HTTP_CODE.BAD_REQUEST)
+    res.status(HttpCode.BAD_REQUEST)
       .send(`Bad request`);
   }
 
