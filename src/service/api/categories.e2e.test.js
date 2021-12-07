@@ -5,7 +5,7 @@ const request = require(`supertest`);
 
 const categories = require(`./categories`);
 const CategoryService = require(`../data-service/category`);
-const {HTTP_CODE} = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 const mockData = require(`./tests.mocks`);
 
 const app = express();
@@ -20,7 +20,7 @@ describe(`API returns category list`, () => {
       .get(`/categories`);
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HTTP_CODE.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
   test(`Returns list of 3 categories`, () => expect(response.body.length).toBe(4));
 
   test(`Category names are "За жизнь", "Деревья", "Разное"`,

@@ -17,7 +17,7 @@ const DATA_PATH = {
   FILE_COMMENTS_PATH: `./data/comments.txt`,
 };
 
-const HTTP_CODE = {
+const HttpCode = {
   OK: 200,
   CREATED: 201,
   BAD_REQUEST: 400,
@@ -27,14 +27,14 @@ const HTTP_CODE = {
   INTERNAL_SERVER_ERROR: 500,
 };
 
-const ENV_LIST = {
+const Env = {
   DEVELOPMENT: `development`,
   PRODUCTION: `production`
 };
 
 module.exports = {
   VARIABLE_LIST,
-  HTTP_CODE,
+  HttpCode,
   DATA_PATH,
-  ENV_LIST,
+  Env,
 };

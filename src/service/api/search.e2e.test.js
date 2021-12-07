@@ -5,7 +5,7 @@ const request = require(`supertest`);
 
 const search = require(`./search`);
 const DataService = require(`../data-service/search`);
-const {HTTP_CODE} = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 const mockData = require(`./tests.mocks`);
 
 const app = express();
@@ -23,7 +23,7 @@ describe(`API returns articles based on search query`, () => {
       });
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HTTP_CODE.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
   test(`1 article found`, () => expect(response.body.length).toBe(1));
   test(`Article has correct id`, () => expect(response.body[0].id).toBe(`GchHBb`));
 });
@@ -34,11 +34,11 @@ test(`API returns code 404 if nothing is found`,
     .query({
       query: `Продам свою душу`
     })
-    .expect(HTTP_CODE.NOT_FOUND)
+    .expect(HttpCode.NOT_FOUND)
 );
 
 test(`API returns 400 when query string is absent`,
     () => request(app)
     .get(`/search`)
-    .expect(HTTP_CODE.BAD_REQUEST)
+    .expect(HttpCode.BAD_REQUEST)
 );

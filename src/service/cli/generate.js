@@ -43,7 +43,7 @@ const generateComments = (count, comments) => (
   }))
 );
 
-const generateOffers = (count, sentences, titles, categories, comments) => (
+const generatearticles = (count, sentences, titles, categories, comments) => (
   new Array(count).fill({}).map(() => ({
     id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH),
     title: titles[getRandomInt(0, titles.length - 1)],
@@ -81,7 +81,7 @@ module.exports = {
     const categories = await readFileContent(DATA_PATH.FILE_CATEGORIES_PATH);
     const comments = await readFileContent(DATA_PATH.FILE_COMMENTS_PATH);
 
-    const content = JSON.stringify(generateOffers(countOffer, sentences, titles, categories, comments));
+    const content = JSON.stringify(generatearticles(countOffer, sentences, titles, categories, comments));
     writeFile(content);
   }
 };

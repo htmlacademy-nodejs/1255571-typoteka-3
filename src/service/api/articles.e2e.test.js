@@ -6,7 +6,7 @@ const request = require(`supertest`);
 const articles = require(`./articles`);
 const ArticleService = require(`../data-service/articles`);
 const CommentService = require(`../data-service/comments`);
-const {HTTP_CODE} = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 const mockData = require(`./tests.mocks`);
 
 const createAPI = () => {
@@ -17,7 +17,7 @@ const createAPI = () => {
   return app;
 };
 
-describe(`API returns a list of all offers`, () => {
+describe(`API returns a list of all articles`, () => {
   const app = createAPI();
 
   let response;
@@ -27,7 +27,7 @@ describe(`API returns a list of all offers`, () => {
       .get(`/articles`);
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HTTP_CODE.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Returns a list of 5 articles`, () => expect(response.body.length).toBe(5));
 
@@ -44,7 +44,7 @@ describe(`API returns an article with given id`, () => {
       .get(`/articles/6h4jlk`);
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HTTP_CODE.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Article's title is "Ёлки. История деревьев"`, () => expect(response.body.title).toBe(`Ёлки. История деревьев`));
 });
@@ -69,7 +69,7 @@ describe(`API creates an article if data is valid`, () => {
       .send(newArticle);
   });
 
-  test(`Status code 201`, () => expect(response.statusCode).toBe(HTTP_CODE.CREATED));
+  test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
 
   test(`Returns article created`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
 
@@ -93,12 +93,12 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(newArticle)) {
-      const badOffer = {...newArticle};
-      delete badOffer[key];
+      const badArticle = {...newArticle};
+      delete badArticle[key];
       await request(app)
         .post(`/articles`)
-        .send(badOffer)
-        .expect(HTTP_CODE.BAD_REQUEST);
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
     }
   });
 });
@@ -123,7 +123,7 @@ describe(`API changes existent article`, () => {
       .send(newArticle);
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HTTP_CODE.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Returns changed article`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
 
@@ -148,7 +148,7 @@ test(`API returns status code 404 when trying to change non-existent article`, (
   return request(app)
     .put(`/articles/NOEXST`)
     .send(validArticle)
-    .expect(HTTP_CODE.NOT_FOUND);
+    .expect(HttpCode.NOT_FOUND);
 });
 
 test(`API returns status code 400 when trying to change an article with invalid data`, () => {
@@ -163,7 +163,7 @@ test(`API returns status code 400 when trying to change an article with invalid 
   return request(app)
     .put(`/articles/NOEXST`)
     .send(invalidArticle)
-    .expect(HTTP_CODE.BAD_REQUEST);
+    .expect(HttpCode.BAD_REQUEST);
 });
 
 describe(`API correctly deletes an article`, () => {
@@ -176,7 +176,7 @@ describe(`API correctly deletes an article`, () => {
       .delete(`/articles/kfA67p`);
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HTTP_CODE.OK));
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Returns deleted article`, () => expect(response.body.id).toBe(`kfA67p`));
 
@@ -191,7 +191,7 @@ test(`API refuses to delete non-existent article`, () => {
 
   return request(app)
     .delete(`/articles/NOEXST`)
-    .expect(HTTP_CODE.NOT_FOUND);
+    .expect(HttpCode.NOT_FOUND);
 });
 
 test(`API refuses to create a comment to non-existent article and returns status code 404`, () => {
@@ -202,7 +202,7 @@ test(`API refuses to create a comment to non-existent article and returns status
     .send({
       text: `Неважно`
     })
-    .expect(HTTP_CODE.NOT_FOUND);
+    .expect(HttpCode.NOT_FOUND);
 });
 
 test(`API refuses to delete non-existent comment`, () => {
@@ -210,5 +210,5 @@ test(`API refuses to delete non-existent comment`, () => {
 
   return request(app)
     .delete(`/articles/kfA67p/comments/NOEXST`)
-    .expect(HTTP_CODE.NOT_FOUND);
+    .expect(HttpCode.NOT_FOUND);
 });
