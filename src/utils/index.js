@@ -22,9 +22,12 @@ const randomDate = (start, end) => {
 
 const ensureArray = (value) => Array.isArray(value) ? value : [value];
 
+const getPictureFileName = (number) => `item${(`0` + number).slice(-2)}.jpg`;
+
 module.exports = {
   getRandomInt,
   shuffle,
   randomDate,
-  ensureArray
+  ensureArray,
+  getPictureFileName,
 };
