@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS articles_categories;
+DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS articles;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -16,6 +16,7 @@ CREATE TABLE articles(
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   user_id integer NOT NULL,
   title varchar(255) NOT NULL,
+  picture varchar(100) NOT NULL,
   announce text NOT NULL,
   full_text text NOT NULL,
   created_date timestamp DEFAULT current_timestamp,

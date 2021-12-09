@@ -32,9 +32,15 @@ const Env = {
   PRODUCTION: `production`
 };
 
+const PictureRestrict = {
+  MIN: 1,
+  MAX: 16,
+};
+
 module.exports = {
   VARIABLE_LIST,
   HttpCode,
   DATA_PATH,
   Env,
+  PictureRestrict,
 };
