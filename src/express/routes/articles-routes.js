@@ -43,24 +43,24 @@ articlesRoutes.get(`/add`, async (req, res) => {
 });
 
 articlesRoutes.post(`/add`,
-  upload.single(`avatar`),
-  async (req, res) => {
-    const {body, file} = req;
-    const articleData = {
-      picture: file ? file.filename : ``,
-      title: body.title,
-      announce: body.announce,
-      fullText: body.fullText,
-      category: ensureArray(body.category),
-    };
+    upload.single(`avatar`),
+    async (req, res) => {
+      const {body, file} = req;
+      const articleData = {
+        picture: file ? file.filename : ``,
+        title: body.title,
+        announce: body.announce,
+        fullText: body.fullText,
+        category: ensureArray(body.category),
+      };
 
-    try {
-      await api.createArticle(articleData);
-      res.redirect(`/my`);
-    } catch (error) {
-      res.redirect(`back`);
+      try {
+        await api.createArticle(articleData);
+        res.redirect(`/my`);
+      } catch (error) {
+        res.redirect(`back`);
+      }
     }
-  }
 );
 
 articlesRoutes.get(`/edit/:id`, async (req, res) => {

@@ -4,6 +4,7 @@ const express = require(`express`);
 const {getLogger} = require(`../lib/logger`);
 const logger = getLogger({name: `api`});
 const sequelize = require(`../lib/sequelize`);
+const defineModels = require(`../models`);
 
 const {
   VARIABLE_LIST,
@@ -24,21 +25,17 @@ const {
   search,
 } = require(`../api`);
 
-const {getMockData} = require(`../lib/get-mock-data`);
-
 const app = express();
 
 app.use(express.json());
 
 const routes = new Router();
-let mockData;
+defineModels(sequelize);
 
 (async () => {
-  mockData = await getMockData();
-
-  categories(routes, new CategoryService(mockData));
-  search(routes, new SearchService(mockData));
-  articles(routes, new ArticleService(mockData), new CommentService(mockData));
+  categories(routes, new CategoryService(sequelize));
+  search(routes, new SearchService(sequelize));
+  articles(routes, new ArticleService(sequelize), new CommentService(sequelize));
 })();
 
 app.use(VARIABLE_LIST.API_PREFIX, routes);
@@ -65,14 +62,6 @@ module.exports = {
 
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || VARIABLE_LIST.DEFAULT_PORT;
-
-    app.get(`/posts`, async (req, res) => {
-      try {
-        res.json(mockData);
-      } catch (_err) {
-        res.send([]);
-      }
-    });
 
     app.use((req, res) => {
       res.status(HttpCode.NOT_FOUND)

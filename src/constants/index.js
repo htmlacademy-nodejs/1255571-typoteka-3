@@ -5,7 +5,6 @@ const VARIABLE_LIST = {
   USER_ARGV_INDEX: 2,
   ExitCode: 1,
   DEFAULT_PORT: `3000`,
-  FILENAME: `mocks.json`,
   MAX_ID_LENGTH: 6,
   API_PREFIX: `/api`,
 };

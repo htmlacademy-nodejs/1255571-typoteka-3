@@ -1,78 +1,55 @@
 'use strict';
 
-const {nanoid} = require(`nanoid`);
-const {
-  VARIABLE_LIST,
-} = require(`../../constants`);
+const Aliase = require(`../models/aliase`);
 
 class ArticleService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
+    this._Comment = sequelize.models.Comment;
+    this._Category = sequelize.models.Category;
   }
 
-  create(article) {
-    const newArticle = Object
-      .assign({id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH), comments: [], createdDate: Date.now()}, article);
+  async create(articleData) {
+    const article = await this._Article.create(articleData);
+    await article.addCategories(articleData.categories);
 
-    this._articles.push(newArticle);
-    return newArticle;
+    return article.get();
   }
 
-  drop(id) {
-    const article = this._articles.find((item) => item.id === id);
-
-    if (!article) {
-      return null;
-    }
-
-    this._articles = this._articles.filter((item) => item.id !== id);
-    return article;
-  }
-
-  findAll() {
-    return this._articles;
-  }
-
-  findOne(id) {
-    return this._articles.find((item) => item.id === id);
-  }
-
-  update(id, article) {
-    const oldArticle = this._articles
-      .find((item) => item.id === id);
-
-    return Object.assign(oldArticle, article);
-  }
-
-  createComment(article, comment) {
-    const oldArticle = this._articles
-      .find((item) => item.id === article.id);
-
-    const newComment = Object
-      .assign({id: nanoid(VARIABLE_LIST.MAX_ID_LENGTH)}, comment);
-
-    const newArticle = oldArticle.comments.push(newComment);
-
-    return Object.assign(oldArticle, newArticle);
-  }
-
-  dropComment(articleId, commentId) {
-    const article = this._articles.find((item) => item.id === articleId);
-    if (!article) {
-      return null;
-    }
-
-    const comment = article.comments.find((item) => item.id === commentId);
-    if (!comment) {
-      return null;
-    }
-
-    this._articles = this._articles.forEach((item) => {
-      if (item.id === articleId) {
-        item.comments.filter((commentItem) => commentItem.id !== commentId);
-      }
+  async drop(id) {
+    const deletedRows = await this._Article.destroy({
+      where: {id}
     });
-    return commentId;
+
+    return !!deletedRows;
+  }
+
+  async findOne(id) {
+    return await this._Article.findByPk(id, {include: [Aliase.CATEGORIES, Aliase.COMMENTS]});
+  }
+
+  async update(id, article) {
+    const [affectedRows] = await this._Article.update(article, {
+      where: {id}
+    });
+    return !!affectedRows;
+  }
+
+  async findAll(needComments) {
+    const include = [Aliase.CATEGORIES];
+
+    if (needComments) {
+      include.push(Aliase.COMMENTS);
+    }
+
+    const articles = await this._Article.findAll({
+      include,
+      order: [
+        [`createdAt`, `DESC`]
+      ]
+    });
+
+    return articles.map((item) => item.get());
   }
 }
 

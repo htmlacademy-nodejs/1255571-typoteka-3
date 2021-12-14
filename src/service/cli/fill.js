@@ -12,11 +12,15 @@ const {
   DATA_PATH,
   PictureRestrict,
 } = require(`../../constants`);
+const {getLogger} = require(`../lib/logger`);
+const logger = getLogger({name: `api`});
+
+const sequelize = require(`../lib/sequelize`);
+const initDatabase = require(`../lib/init-db`);
 
 const DEFAULT_COUNT = 1;
 const MAX_COUNT = 1000;
 const MAX_COMMENTS = 5;
-const FILE_NAME = `fill-db.sql`;
 
 const users = [
   {
@@ -24,13 +28,25 @@ const users = [
     passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
     firstName: `Иван`,
     lastName: `Иванов`,
-    avatar: `avatar1.jpg`
+    avatar: `avatar-1.png`
   }, {
     email: `petrov@example.com`,
     passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
     firstName: `Пётр`,
     lastName: `Петров`,
-    avatar: `avatar2.jpg`
+    avatar: `avatar-2.png`
+  }, {
+    email: `ivanova@example.com`,
+    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    firstName: `Алина`,
+    lastName: `Иванова`,
+    avatar: `avatar-3.png`
+  }, {
+    email: `petrova@example.com`,
+    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    firstName: `Ольга`,
+    lastName: `Петрова`,
+    avatar: `avatar-4.png`
   }
 ];
 
@@ -49,39 +65,51 @@ const readFileContent = async (filePath) => {
 const generateComments = (count, articleId, userCount, comments) => (
   new Array(count).fill({}).map(() => ({
     userId: getRandomInt(1, userCount),
-    articleId: articleId,
+    articleId,
     text: shuffle(comments)
       .slice(0, getRandomInt(1, 3))
       .join(` `),
   }))
 );
 
-const generatearticles = (count, sentences, titles, categoryCount, userCount, comments) => (
+const getRandomSubarray = (items) => {
+  items = items.slice();
+  let count = getRandomInt(1, items.length - 1);
+  const result = [];
+  while (count--) {
+    result.push(
+        ...items.splice(
+            getRandomInt(0, items.length - 1), 1
+        )
+    );
+  }
+  return result;
+};
+
+const generateArticles = (count, sentences, titles, categories, userCount, comments) => (
   new Array(count).fill({}).map((_, index) => ({
     title: titles[getRandomInt(0, titles.length - 1)],
     picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)),
-    announce: shuffle(sentences).slice(1, 5).join(` `),
+    announce: shuffle(sentences).slice(1, 3).join(` `),
     fullText: shuffle(sentences).slice(1, 5).join(` `),
-    category: [getRandomInt(1, categoryCount)],
+    categories: getRandomSubarray(categories),
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), index + 1, userCount, comments),
     userId: getRandomInt(1, userCount),
   }))
 );
 
-const writeFile = async (content) => {
-  try {
-    await fs.writeFile(FILE_NAME, content);
-    console.info(chalk.green(`Операция завершена успешно. Файл создан.`));
-    process.exit(0);
-  } catch (error) {
-    console.error(chalk.red(`Не удалось записать данные в файл...`));
-    process.exit(VARIABLE_LIST.ExitCode);
-  }
-};
-
 module.exports = {
   name: `--filldb`,
   async run(args) {
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
+    }
+    logger.info(`Connection to database established`);
+
     const [count] = args;
     if (Number.parseInt(count, 10) >= MAX_COUNT) {
       console.log(chalk.red(`Не больше 1000 объявлений!`));
@@ -94,51 +122,9 @@ module.exports = {
     const categories = await readFileContent(DATA_PATH.FILE_CATEGORIES_PATH);
     const commentSentences = await readFileContent(DATA_PATH.FILE_COMMENTS_PATH);
 
-    const articles = generatearticles(countArticle, sentences, titles, categories.length, users.length, commentSentences);
-    const comments = articles.flatMap((article) => article.comments);
-    const articleCategories = articles.map((article, index) => ({articleId: index + 1, categoryId: article.category[0]}));
+    const articles = generateArticles(countArticle, sentences, titles, categories, users.length, commentSentences);
 
-    const userValues = users.map(
-      ({email, passwordHash, firstName, lastName, avatar}) =>
-        `('${email}', '${passwordHash}', '${firstName}', '${lastName}', '${avatar}')`
-    ).join(`,\n`);
-
-    const categoryValues = categories.map((name) => `('${name}')`).join(`,\n`);
-
-    const articleValues = articles.map(
-      ({title, announce, fullText, picture, userId}) =>
-        `(${userId}, '${title}', '${picture}', '${announce}', '${fullText}')`
-    ).join(`,\n`);
-
-    const articleCategoryValues = articleCategories.map(
-      ({articleId, categoryId}) =>
-        `(${articleId}, ${categoryId})`
-    ).join(`,\n`);
-
-    const commentValues = comments.map(
-      ({text, userId, articleId}) =>
-        `(${articleId}, ${userId}, '${text}')`
-    ).join(`,\n`);
-
-    const content = `
-INSERT INTO users(email, password_hash, first_name, last_name, avatar) VALUES
-${userValues};
-INSERT INTO categories(name) VALUES
-${categoryValues};
-ALTER TABLE articles DISABLE TRIGGER ALL;
-INSERT INTO articles(user_id, title, picture, announce, full_text) VALUES
-${articleValues};
-ALTER TABLE articles ENABLE TRIGGER ALL;
-ALTER TABLE articles_categories DISABLE TRIGGER ALL;
-INSERT INTO articles_categories(article_id, category_id) VALUES
-${articleCategoryValues};
-ALTER TABLE articles_categories ENABLE TRIGGER ALL;
-ALTER TABLE comments DISABLE TRIGGER ALL;
-INSERT INTO COMMENTS(article_id, user_id, text) VALUES
-${commentValues};
-ALTER TABLE comments ENABLE TRIGGER ALL;`;
-
-    writeFile(content);
+    return initDatabase(sequelize, {articles, categories, users});
   }
 };
 

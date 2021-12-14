@@ -64,12 +64,12 @@ block content
         each article in articles
           li.preview__item
             ul.preview__breadcrumbs
-              each category in article.category
+              each category in article.categories
                 li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href='#') #{category}
+                  a.preview__breadcrumbs-link(href='#') #{category.name}
             .preview__background
               +insertArticleImage(article)
-            time.preview__time(datetime='2019-03-21T20:33') #{article.createdDate}
+            time.preview__time(datetime=article.createdAt) #{new Date(article.createdAt).toLocaleDateString()}
             h3.preview__name
               a.preview__name-link(href='/articles/' + article.id) #{article.title}
             p.preview__text
