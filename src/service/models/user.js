@@ -6,27 +6,22 @@ class User extends Model {}
 
 const define = (sequelize) => User.init({
   email: {
-    // eslint-disable-next-line new-cap
-    type: DataTypes.STRING(50),
+    type: new DataTypes.STRING(50),
     allowNull: false
   },
   passwordHash: {
-    // eslint-disable-next-line new-cap
-    type: DataTypes.STRING(100),
+    type: new DataTypes.STRING(100),
     allowNull: false
   },
   firstName: {
-    // eslint-disable-next-line new-cap
-    type: DataTypes.STRING(50),
+    type: new DataTypes.STRING(50),
     allowNull: false
   },
   lastName: {
-    // eslint-disable-next-line new-cap
-    type: DataTypes.STRING(50),
+    type: new DataTypes.STRING(50),
     allowNull: false
   },
   avatar: {
-    // eslint-disable-next-line new-cap
     type: DataTypes.STRING,
   }
 }, {
