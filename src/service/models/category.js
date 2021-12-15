@@ -6,8 +6,7 @@ class Category extends Model {}
 
 const define = (sequelize) => Category.init({
   name: {
-    // eslint-disable-next-line new-cap
-    type: DataTypes.STRING(30),
+    type: new DataTypes.STRING(30),
     allowNull: false
   }
 }, {
