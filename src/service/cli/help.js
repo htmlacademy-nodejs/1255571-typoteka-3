@@ -11,7 +11,7 @@ const textHelp = `
     Команды:
     --version:            выводит номер версии
     --help:               печатает этот текст
-    --generate <count>    формирует файл mocks.json
+    --filldb <count>    формирует тестовые данные
     --server <count>      запускает сервер, порт по умолчанию - 3000
 `;
 

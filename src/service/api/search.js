@@ -16,7 +16,7 @@ module.exports = (app, service) => {
         .send(`Bad request`);
     }
 
-    const atricles = await service.find(query);
+    const atricles = await service.findAll(query);
 
     if (!atricles || atricles.length === 0) {
       return res.status(HttpCode.NOT_FOUND)

@@ -12,11 +12,10 @@ block content
           time.post__date(datetime='2019-03-21T20:33') 21.03.2019, 20:33
           h2.post__title.title.title--main #{article.title}
           ul.post__themes.themes
-            each category in article.category
+            each category in article.categories
               li.themes__item
                 a.themes__item-link(href='#')
-                  | #{category}
-                  sup 88
+                  | #{category.name}
                 button.themes__remove-btn(type='button') Удалить категорию
         .post__picture
           img(src='/img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
@@ -31,7 +30,7 @@ block content
           each comment in article.comments
             li.comments__comment
               .comments__avatar.avatar
-                img(src='/img/avatar-1.png' alt='аватар пользователя')
+                img(src='/img/' alt='аватар пользователя')
               .comments__text
                 .comments__head
                   p Евгений Петров •
