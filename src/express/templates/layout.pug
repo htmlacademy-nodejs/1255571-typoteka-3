@@ -46,6 +46,20 @@ html(lang='ru')
           li
             a.pagination__button.button.button--forward(class={'button--disabled': page === totalPages}, href=(page < totalPages ? `${prefix}page=${page + 1}` : null), aria-label='Страница вперед')
 
+    style.
+      .server-error{
+        border-radius: 10px;
+        color: white;
+        background-color: tomato;
+        margin: 20px 0;
+        padding: 10px;
+      }
+
+    mixin insertErrorMessage(messages)
+      if messages
+        each message of messages
+          .server-error= message
+
     .wrapper
       include partials/header.pug
       block content

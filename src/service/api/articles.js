@@ -5,6 +5,8 @@ const {HttpCode} = require(`../../constants`);
 
 const articleValidator = require(`../middlewares/article-validator`);
 const articleExist = require(`../middlewares/article-exist`);
+const routeParamsValidator = require(`../middlewares/route-params-validator`);
+const commentValidator = require(`../middlewares/comment-validator`);
 
 module.exports = (app, service, commentService) => {
   const route = new Router();
@@ -23,7 +25,7 @@ module.exports = (app, service, commentService) => {
       .json(result);
   });
 
-  route.get(`/:articleId`, async (req, res) => {
+  route.get(`/:articleId`, routeParamsValidator, async (req, res) => {
     const {articleId} = req.params;
     const article = await service.findOne(articleId);
     if (!article) {
@@ -50,7 +52,7 @@ module.exports = (app, service, commentService) => {
       .json(article);
   });
 
-  route.delete(`/:articleId`, articleExist(service), async (req, res) => {
+  route.delete(`/:articleId`, [routeParamsValidator, articleExist(service)], async (req, res) => {
     const {articleId} = req.params;
     const article = await service.drop(articleId);
 
@@ -75,7 +77,7 @@ module.exports = (app, service, commentService) => {
       .json(comments);
   });
 
-  route.post(`/:articleId/comments`, articleExist(service), async (req, res) => {
+  route.post(`/:articleId/comments`, [commentValidator, commentValidator, articleExist(service)], async (req, res) => {
     const {articleId} = req.params;
     const article = await service.findOne(articleId);
     const comment = await commentService.createComment(article, req.body);
@@ -84,7 +86,7 @@ module.exports = (app, service, commentService) => {
       .json(comment);
   });
 
-  route.delete(`/:articleId/comments/:commentId`, articleExist(service), async (req, res) => {
+  route.delete(`/:articleId/comments/:commentId`, [routeParamsValidator, articleExist(service)], async (req, res) => {
     const {articleId} = req.params;
     const article = await service.findOne(articleId);
     const commentId = await commentService.drop(article, req.body);

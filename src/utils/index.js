@@ -24,10 +24,15 @@ const ensureArray = (value) => Array.isArray(value) ? value : [value];
 
 const getPictureFileName = (number) => `item${(`0` + number).slice(-2)}.jpg`;
 
+const prepareErrors = (errors) => {
+  return errors.response.data.split(`\n`);
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
   randomDate,
   ensureArray,
   getPictureFileName,
+  prepareErrors,
 };
