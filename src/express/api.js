@@ -7,6 +7,8 @@ const TIMEOUT = 1000;
 const port = process.env.API_PORT || 3000;
 const defaultUrl = `http://localhost:${port}/api/`;
 
+const {HttpMethod} = require(`../constants/index`);
+
 class API {
   constructor(baseURL, timeout) {
     this._http = axios.create({
@@ -33,7 +35,21 @@ class API {
 
   async createArticle(data) {
     return this._load(`/articles`, {
-      method: `POST`,
+      method: HttpMethod.POST,
+      data
+    });
+  }
+
+  async editArticle(id, data) {
+    return this._load(`/articles/${id}`, {
+      method: HttpMethod.PUT,
+      data
+    });
+  }
+
+  async createComment(id, data) {
+    return this._load(`/articles/${id}/comments`, {
+      method: HttpMethod.POST,
       data
     });
   }

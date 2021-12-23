@@ -19,7 +19,8 @@ block content
                       value=date
                       placeholder=date
                     )
-              button.new-publication__button.button.button--colored(type='submit') Опубликовать
+              +insertErrorMessage(validationMessages)
+              button.new-publication__button.button.button--colored(type='submit' disabled="") Опубликовать
             button.popup__button.button.button--popup-close(type='button' aria-label='Закрыть окно')
               | Закрыть
               | окно
@@ -39,10 +40,10 @@ block content
                     .new-publication__checkbox.new-publication__checkbox--auto
                       input(
                         type='checkbox'
-                        name=`category`
-                        id=`${category}`
+                        name=`${category.name}`
+                        id=`${category.id}`
                       )
-                      label(for=`${category}`) #{category}
+                      label(for=`${category.name}`) #{category.name}
                 a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text

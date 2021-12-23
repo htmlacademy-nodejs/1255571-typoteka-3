@@ -23,10 +23,10 @@ const createAPI = async () => {
 let app;
 
 const newArticle = {
-  title: `You’re tearing me apart, Lisa`,
-  announce: `Oh, hi, Mark`,
-  fullText: `I got the results of the test back. I definitely got breast cancer`,
+  title: `You’re tearing me apart, Lisa!  I definitely got breast cancer`,
+  announce: `Oh, hi, Mark! I got the results of the test back.`,
   categories: [1, 2],
+  createdAt: `2021-12-22T15:25:26+0000`,
 };
 
 beforeAll(async () => {
@@ -104,13 +104,13 @@ describe(`API changes existent article`, () => {
 
   test(`Article is really changed`, () => request(app)
     .get(`/articles/5`)
-    .expect((res) => expect(res.body.title).toBe(`You’re tearing me apart, Lisa`))
+    .expect((res) => expect(res.body.title).toBe(`You’re tearing me apart, Lisa!  I definitely got breast cancer`))
   );
 });
 
 test(`API returns status code 404 when trying to change non-existent article`, async () => {
   return await request(app)
-    .put(`/articles/NOEXST`)
+    .put(`/articles/999999`)
     .send(newArticle)
     .expect(HttpCode.NOT_FOUND);
 });
@@ -150,7 +150,7 @@ describe(`API correctly deletes an article`, () => {
 test(`API refuses to delete non-existent article`, async () => {
   return await request(app)
     .delete(`/articles/NOEXST`)
-    .expect(HttpCode.NOT_FOUND);
+    .expect(HttpCode.BAD_REQUEST);
 });
 
 test(`API refuses to create a comment to non-existent article and returns status code 404`, async () => {
@@ -159,11 +159,39 @@ test(`API refuses to create a comment to non-existent article and returns status
     .send({
       text: `Неважно`
     })
-    .expect(HttpCode.NOT_FOUND);
+    .expect(HttpCode.BAD_REQUEST);
 });
 
 test(`API refuses to delete non-existent comment`, async () => {
   return await request(app)
     .delete(`/articles/2/comments/NOEXST`)
-    .expect(HttpCode.OK);
+    .expect(HttpCode.BAD_REQUEST);
+});
+
+test(`When field type is wrong response code is 400`, async () => {
+  const badArticles = [
+    {...newArticle, fullText: true},
+    {...newArticle, fullText: 12345},
+    {...newArticle, categories: `Котики`}
+  ];
+  for (const badArticle of badArticles) {
+    await request(app)
+      .post(`/articles`)
+      .send(badArticle)
+      .expect(HttpCode.BAD_REQUEST);
+  }
+});
+
+test(`When field value is wrong response code is 400`, async () => {
+  const badArticles = [
+    {...newArticle, announce: `too short`},
+    {...newArticle, title: `too short`},
+    {...newArticle, categories: []}
+  ];
+  for (const badArticle of badArticles) {
+    await request(app)
+      .post(`/articles`)
+      .send(badArticle)
+      .expect(HttpCode.BAD_REQUEST);
+  }
 });

@@ -36,10 +36,18 @@ const PictureRestrict = {
   MAX: 16,
 };
 
+const HttpMethod = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 module.exports = {
   VARIABLE_LIST,
   HttpCode,
   DATA_PATH,
   Env,
   PictureRestrict,
+  HttpMethod,
 };

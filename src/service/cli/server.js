@@ -5,6 +5,7 @@ const {getLogger} = require(`../lib/logger`);
 const logger = getLogger({name: `api`});
 const sequelize = require(`../lib/sequelize`);
 const defineModels = require(`../models`);
+const helmet = require('helmet');
 
 const {
   VARIABLE_LIST,
@@ -72,6 +73,16 @@ module.exports = {
     app.use((err, _req, _res, _next) => {
       logger.error(`An error occurred on processing request: ${err.message}`);
     });
+
+    app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+        }
+      },
+      xssFilter: true,
+    }));
 
     try {
       app.listen(port, (err) => {
