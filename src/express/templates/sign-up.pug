@@ -9,28 +9,28 @@ block content
         | Закрыть
         | окно
       h2.visually-hidden Форма регистрации
-      ul.popup__tabs
-        li.popup__tab.popup__tab--active.popup__tab--register
-          button.popup__tab-switcher.button(type='button') Регистрация
-        li.popup__tab.popup__tab--log-in
-          button.popup__tab-switcher.button(type='button') Войти
       .popup__form.popup__form--active.form.form--register
-        form(action='#' method='get')
+        form(action='/register' method='post' enctype='multipart/form-data' autocomplete='off')
           .form__field
             label
-              input(type='email' placeholder='Электронная почта' required='')
+              input(type='email' name='email' placeholder='Электронная почта' required='')
           .form__field
             label
-              input(type='text' placeholder='Имя' required='')
+              input(type='text' name='firstname' placeholder='Имя' required='')
           .form__field
             label
-              input(type='text' placeholder='Фамилия')
+              input(type='text' name='lastname' placeholder='Фамилия')
           .form__field
             label
-              input(type='password' placeholder='Пароль' required='')
+              input(type='password' name='password' placeholder='Пароль' required='')
           .form__field
             label
-              input(type='password' placeholder='Повтор пароля' required='')
+              input(type='password' name='password-again' placeholder='Повтор пароля' required='')
+          if !!validationMessages
+              .form__validation-error
+                p.form__error-message При регистрации произошли ошибки:
+                ul.form__errors
+                  +insertErrorMessage(validationMessages)
           .form__image-loader
             a.form__avatar.avatar
               img(src='img/icons/smile.svg' alt='аватар пользователя')
@@ -38,13 +38,4 @@ block content
               input.visually-hidden(type='file')
               | Загрузить фото профиля
           button.form__submit-btn.form__submit-btn--register.button.button--colored(type='submit') Зарегистрироваться
-      .popup__form.popup__form--hidden.form.form--log-in
-        form(action='#' method='get')
-          .form__field
-            label
-              input(type='email' placeholder='Электронная почта' required='')
-          .form__field
-            label
-              input(type='password' placeholder='Пароль' required='')
-          button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type='submit') Войти
     .modal__overlay

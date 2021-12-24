@@ -17,6 +17,13 @@ class API {
     });
   }
 
+  async createUser(data) {
+    return this._load('/user', {
+      method: HttpMethod.POST,
+      data
+    });
+  }
+
   getArticles({offset, limit, comments}) {
     return this._load(`/articles`, {params: {offset, limit, comments}});
   }
