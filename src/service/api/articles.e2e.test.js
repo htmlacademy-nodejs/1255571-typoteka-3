@@ -27,6 +27,7 @@ const newArticle = {
   announce: `Oh, hi, Mark! I got the results of the test back.`,
   categories: [1, 2],
   createdAt: `2021-12-22T15:25:26+0000`,
+  userId: 1
 };
 
 beforeAll(async () => {

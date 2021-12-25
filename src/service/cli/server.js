@@ -5,7 +5,7 @@ const {getLogger} = require(`../lib/logger`);
 const logger = getLogger({name: `api`});
 const sequelize = require(`../lib/sequelize`);
 const defineModels = require(`../models`);
-const helmet = require('helmet');
+const helmet = require(`helmet`);
 
 const {
   VARIABLE_LIST,
@@ -17,6 +17,7 @@ const {
   SearchService,
   ArticleService,
   CommentService,
+  UserService,
 } = require(`../data-service`);
 
 const {Router} = require(`express`);
@@ -24,6 +25,7 @@ const {
   categories,
   articles,
   search,
+  user,
 } = require(`../api`);
 
 const app = express();
@@ -37,6 +39,7 @@ defineModels(sequelize);
   categories(routes, new CategoryService(sequelize));
   search(routes, new SearchService(sequelize));
   articles(routes, new ArticleService(sequelize), new CommentService(sequelize));
+  user(routes, new UserService(sequelize));
 })();
 
 app.use(VARIABLE_LIST.API_PREFIX, routes);
@@ -77,8 +80,8 @@ module.exports = {
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'"],
+          defaultSrc: [`'self'`],
+          scriptSrc: [`'self'`],
         }
       },
       xssFilter: true,
