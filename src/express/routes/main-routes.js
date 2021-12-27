@@ -92,6 +92,9 @@ mainRouter.get(`/search`, async (req, res) => {
   }
 });
 
-mainRouter.get(`/categories`, auth, (req, res) => res.render(`all-categories`));
+mainRouter.get(`/categories`, auth, (req, res) => {
+
+  res.render(`all-categories`)
+});
 
 module.exports = mainRouter;
