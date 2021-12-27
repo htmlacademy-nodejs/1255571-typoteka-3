@@ -29,12 +29,11 @@ const schema = Joi.object({
   passwordRepeated: Joi.string().required().valid(Joi.ref(`password`)).required().messages({
     'any.only': ErrorRegisterMessage.PASSWORD_REPEATED
   }),
-  avatar: Joi.string().allow(null, '')
+  avatar: Joi.string().allow(null, ``)
 });
 
 module.exports = (service) => async (req, res, next) => {
   const newUser = req.body;
-  console.log(newUser);
   const {error} = schema.validate(newUser, {abortEarly: false});
 
   if (error) {

@@ -4,7 +4,7 @@ const express = require(`express`);
 const {getLogger} = require(`../lib/logger`);
 const logger = getLogger({name: `api`});
 const sequelize = require(`../lib/sequelize`);
-const defineModels = require(`../models`);
+const defineModels = require(`../models/define`);
 const helmet = require(`helmet`);
 
 const {

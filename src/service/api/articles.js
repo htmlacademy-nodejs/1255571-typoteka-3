@@ -28,6 +28,7 @@ module.exports = (app, service, commentService) => {
   route.get(`/:articleId`, routeParamsValidator, async (req, res) => {
     const {articleId} = req.params;
     const article = await service.findOne(articleId);
+    console.log(article.comments[0].users);
     if (!article) {
       return res.status(HttpCode.NOT_FOUND)
         .send(`Not found with ${articleId}`);
