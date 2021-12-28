@@ -3,29 +3,30 @@
 const {
   getRandomInt,
 } = require(`../../utils`);
+const passwordUtils = require(`../lib/password`);
 
 const mockUsers = [
   {
     email: `ivanov@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    passwordHash: passwordUtils.hashSync(`111111111`),
     firstName: `Иван`,
     lastName: `Иванов`,
     avatar: `avatar-1.png`
   }, {
     email: `petrov@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    passwordHash: passwordUtils.hashSync(`222222222`),
     firstName: `Пётр`,
     lastName: `Петров`,
     avatar: `avatar-2.png`
   }, {
     email: `ivanova@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    passwordHash: passwordUtils.hashSync(`333333333`),
     firstName: `Алина`,
     lastName: `Иванова`,
     avatar: `avatar-3.png`
   }, {
     email: `petrova@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    passwordHash: passwordUtils.hashSync(`444444444`),
     firstName: `Ольга`,
     lastName: `Петрова`,
     avatar: `avatar-4.png`

@@ -26,7 +26,28 @@ class ArticleService {
   }
 
   async findOne(id) {
-    return await this._Article.findByPk(id, {include: [Aliase.CATEGORIES, Aliase.COMMENTS]});
+    const include = [
+      Aliase.CATEGORIES,
+    ];
+
+    include.push({
+      model: this._Comment,
+      as: Aliase.COMMENTS,
+      include: [
+        {
+          model: this._User,
+          as: Aliase.USERS,
+          attributes: {
+            exclude: [`passwordHash`]
+          }
+        }
+      ]
+    });
+
+    return await this._Article.findOne({
+      where: {id},
+      include
+    });
   }
 
   async update(id, article) {
@@ -67,7 +88,7 @@ class ArticleService {
 
     if (needComments) {
       include.push({
-        model: Aliase.COMMENTS,
+        model: this._Comment,
         as: Aliase.COMMENTS,
         include: [
           {

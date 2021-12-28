@@ -18,9 +18,16 @@ class API {
   }
 
   async createUser(data) {
-    return this._load('/user', {
+    return this._load(`/user`, {
       method: HttpMethod.POST,
       data
+    });
+  }
+
+  auth(email, password) {
+    return this._load(`/user/auth`, {
+      method: HttpMethod.POST,
+      data: {email, password}
     });
   }
 

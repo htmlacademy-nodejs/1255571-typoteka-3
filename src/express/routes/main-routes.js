@@ -4,12 +4,14 @@ const {Router} = require(`express`);
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
 const {prepareErrors} = require(`../../utils`);
+const auth = require(`../middlewares/auth`);
 
 const ARTICLES_PER_PAGE = 8;
 
 const mainRouter = new Router();
 
 mainRouter.get(`/`, async (req, res) => {
+  const {user} = req.session;
   let {page = 1} = req.query;
   page = +page;
   const limit = ARTICLES_PER_PAGE;
@@ -26,12 +28,12 @@ mainRouter.get(`/`, async (req, res) => {
 
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
 
-  res.render(`main`, {articles, page, totalPages, categories});
+  res.render(`main`, {articles, page, totalPages, categories, user});
 });
 
-mainRouter.get('/register', (req, res) => {
+mainRouter.get(`/register`, (req, res) => {
 
-  res.render('sign-up');
+  res.render(`sign-up`);
 });
 
 mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
@@ -45,19 +47,35 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
     passwordRepeated: body[`password-again`]
   };
 
-  console.log(userData);
-
   try {
     await api.createUser(userData);
     res.redirect(`/login`);
   } catch (errors) {
     const validationMessages = prepareErrors(errors);
-    console.log(validationMessages);
     res.render(`sign-up`, {validationMessages});
   }
 });
 
 mainRouter.get(`/login`, (req, res) => res.render(`login`));
+
+mainRouter.post(`/login`, async (req, res) => {
+  try {
+    const user = await api.auth(req.body[`email`], req.body[`password`]);
+    req.session.user = user;
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (errors) {
+    const validationMessages = prepareErrors(errors);
+    const {user} = req.session;
+    res.render(`login`, {user, validationMessages});
+  }
+});
+
+mainRouter.get(`/logout`, (req, res) => {
+  delete req.session.user;
+  res.redirect(`/`);
+});
 
 mainRouter.get(`/search`, async (req, res) => {
   const search = req.query.search;
@@ -74,6 +92,9 @@ mainRouter.get(`/search`, async (req, res) => {
   }
 });
 
-mainRouter.get(`/categories`, (req, res) => res.render(`all-categories`));
+mainRouter.get(`/categories`, auth, (req, res) => {
+
+  res.render(`all-categories`)
+});
 
 module.exports = mainRouter;
